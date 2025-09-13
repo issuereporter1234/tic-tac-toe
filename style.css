@@ -1,0 +1,16 @@
+#board{
+    border: 1px solid black;
+    width: 500px;
+    height: 500px;
+    display: grid;
+    grid-template-columns: repeat(3, 167px );
+    grid-template-rows: repeat(3, 167px);
+}
+.field{
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 80px;
+
+}

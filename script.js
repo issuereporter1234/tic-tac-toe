@@ -1,16 +1,13 @@
 const Gameboard = {
     player1 :'X',
     player2 :'O',
-    fields: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    display() { return `${this.fields[1]} ${this.fields[2]} ${this.fields[3]}
-${this.fields[4]} ${this.fields[5]} ${this.fields[6]}
-${this.fields[7]} ${this.fields[8]} ${this.fields[9]}`
-    },
+    fields: ['','' ,'' ,'' ,'' ,'' ,'' ,'' ,'' ,''],
     reset(){
-        this.fields = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-    }
+        this.fields = ['', '', '', '', '', '', '', '', '', '']
+
+    },
+    gameOver: false
 }
-console.log(Gameboard.display());
 
 const turns = {
     player1Turn: true,
@@ -31,6 +28,7 @@ const turns = {
 }
 
 function playing(field){
+    if(Gameboard.gameOver) {return}
     if (turns.player1Turn && !(usedFields.fields[field])){
         Gameboard.fields[field] = Gameboard.player1
         turns.changeTurn()
@@ -42,13 +40,22 @@ function playing(field){
         
     }
    
-   console.log(Gameboard.display())
+  
    usedFields.changeStatus(field)
+   displayGame()
    const winner = checkWinner();
-   if(winner){
-    console.log(`${winner} IS A WINNER!!!!!` )
+   
+   if(!(winner=== 'draw') && winner){
+    displayInfo(`${checkWinner()} WON THE GAME!!!!`)
     Gameboard.reset()
+    usedFields.reset()
+    Gameboard.gameOver = true
    }
+   else if(winner === 'draw'){
+    displayInfo("It's a draw")
+     Gameboard.gameOver = true
+   }
+   //find a solution when there is a draw
 }
 
 const usedFields = {
@@ -58,12 +65,15 @@ const usedFields = {
             this.fields[index] = true
         }
         else if(this.fields[index]){
-            console.log(`Field ${index} can't be used twise`)
+            displayInfo(`That field is alredy occupied`)
         }
         else{
             throw Error('Error with a function usedFields');
             
         }
+    },
+    reset(){
+        this.fields = [false, false, false, false, false, false, false, false, false, false]
     }
 }
 
@@ -80,17 +90,58 @@ const winningCombos = [
 
 
 function checkWinner(){
+    
     for (const combo of winningCombos){
         const [a, b, c] = combo;
-
-    
-    if(
-        Gameboard.fields[a] === Gameboard.fields[b] &&
+        let isACombo = (Gameboard.fields[a] === Gameboard.fields[b] &&
         Gameboard.fields[a] === Gameboard.fields[c] &&
-        (Gameboard.fields[a] === Gameboard.player1 || Gameboard.fields[a] === Gameboard.player2)
-    ){
+        (Gameboard.fields[a] === Gameboard.player1 || Gameboard.fields[a] === Gameboard.player2))
+    
+    if(isACombo){
+        
         return Gameboard.fields[a];
     }
     }
+    const allUsed = usedFields.fields.slice(1).every(status => status === true);
+    if (allUsed && !isACombo) {return "draw"}
     return null
 }
+
+function displayGame(){
+    
+    for(let i = 1; i < 10; i++){
+       let field = document.getElementById(`field${i}`)
+       field.innerText = Gameboard.fields[i]
+    }
+    
+}
+displayGame();
+function displayInfo(infoText){
+    const infoEl = document.getElementById('info')
+    infoEl.innerText = infoText
+}
+
+
+(function(){
+    document.querySelectorAll('.field').forEach(field => {
+        field.addEventListener('click', () =>{
+              const index = parseInt(field.id.split('d')[1]);
+            playing(index)
+        })
+    })
+})()
+
+function gameReset(){
+    Gameboard.reset();
+    usedFields.reset();
+    displayGame()
+    displayInfo('')
+    Gameboard.gameOver = false
+    
+
+};
+
+
+document.querySelector('#reset').addEventListener('click', () =>{
+gameReset()
+})
