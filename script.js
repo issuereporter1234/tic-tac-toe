@@ -24,6 +24,10 @@ const turns = {
         else{
             throw Error('Error with a function turns.changeTurn')
         }
+    },
+    reset(){
+        this.player1Turn = true
+        this.player2Turn = false
     }
 }
 
@@ -90,21 +94,23 @@ const winningCombos = [
 
 
 function checkWinner(){
-    
     for (const combo of winningCombos){
         const [a, b, c] = combo;
         let isACombo = (Gameboard.fields[a] === Gameboard.fields[b] &&
         Gameboard.fields[a] === Gameboard.fields[c] &&
         (Gameboard.fields[a] === Gameboard.player1 || Gameboard.fields[a] === Gameboard.player2))
     
+    
+    
     if(isACombo){
         
         return Gameboard.fields[a];
     }
-    }
+}
     const allUsed = usedFields.fields.slice(1).every(status => status === true);
     if (allUsed && !isACombo) {return "draw"}
     return null
+
 }
 
 function displayGame(){
@@ -112,8 +118,21 @@ function displayGame(){
     for(let i = 1; i < 10; i++){
        let field = document.getElementById(`field${i}`)
        field.innerText = Gameboard.fields[i]
+      if(Gameboard.fields[i] === 'X'){
+         field.classList.add('x')
+        }
+        else if(Gameboard.fields[i] === 'O'){
+            field.classList.add('o')
+        }
     }
     
+}
+function resetClasses(){
+    for(let i = 1; i < 10; i++){
+         let field = document.getElementById(`field${i}`)
+        field.classList.remove('x')
+        field.classList.remove('o')
+    }
 }
 displayGame();
 function displayInfo(infoText){
@@ -137,6 +156,8 @@ function gameReset(){
     displayGame()
     displayInfo('')
     Gameboard.gameOver = false
+    resetClasses()
+    turns.reset()
     
 
 };

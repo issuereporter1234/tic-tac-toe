@@ -2,6 +2,7 @@ body{
     display: flex;
     flex-direction: column;
     align-items: center;
+    font-family: 'Courier New', Courier, monospace;
 }
 #info{
     height: 10px;
@@ -22,4 +23,11 @@ body{
     align-items: center;
     font-size: 80px;
 
+}
+.x{
+    color: red;
+}
+
+.o{
+    color: blue;
 }
